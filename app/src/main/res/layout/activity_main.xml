@@ -28,8 +28,15 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_gravity="center">
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/buttonNo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Нет" />
 
         <Button
             android:id="@+id/buttonYes"
@@ -38,14 +45,27 @@
             android:layout_gravity="center"
             android:text="Да" />
 
-        <Button
-            android:id="@+id/buttonNo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Нет"
-            android:layout_gravity="center"/>
-
     </LinearLayout>
 
+    <EditText
+        android:id="@+id/editTextNewQuestion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="*укажите вопрос*" />
+
+    <EditText
+        android:id="@+id/editTextName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="*укажите название животного" />
+
+    <Button
+        android:id="@+id/buttonSave"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save"
+        android:layout_gravity="center" />
 
 </LinearLayout>

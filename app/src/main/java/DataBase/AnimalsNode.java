@@ -6,8 +6,8 @@ public class AnimalsNode
     private LazyImmutableInt id;
     private String question;
     private String name;
-    private int idPositive;
-    private int idNegative;
+    private int idPositive=-1;
+    private int idNegative=-1;
 
     public AnimalsNode()
     {
@@ -35,9 +35,10 @@ public class AnimalsNode
         return name;
     }
 
-    public void setName(String name)
+    public AnimalsNode setName(String name)
     {
         this.name = name;
+        return this;
     }
 
     public int getIdPositive()
