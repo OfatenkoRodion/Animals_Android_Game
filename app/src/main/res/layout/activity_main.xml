@@ -47,6 +47,28 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/buttonNoGuessed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Нет, это не мое животное" />
+
+        <Button
+            android:id="@+id/buttonGuessed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Да, это оно" />
+
+    </LinearLayout>
+
     <EditText
         android:id="@+id/editTextNewQuestion"
         android:layout_width="wrap_content"

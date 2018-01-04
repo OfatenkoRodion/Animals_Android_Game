@@ -44,8 +44,7 @@ public class MainActivity extends AppCompatActivity
         animalsDB = new AnimalsDB(this);
 
         for (View view:viewListForAdding)
-        view.setVisibility(View.INVISIBLE);
-
+            view.setVisibility(View.INVISIBLE);
 
     }
 
@@ -56,58 +55,18 @@ public class MainActivity extends AppCompatActivity
         ((Button)findViewById(R.id.buttonStart)).setText("Дальше");
     }
 
-    private void askQuestion()
-    {
-        currentAnimalsNode=animalsDB.getAnimalsNodeById(pointer);
-        textViewQuestion.setText(currentAnimalsNode.getQuestion());
-    }
     @OnClick(R.id.buttonYes)
     void onButtonYesClick()
     {
-        if (status==Status.INPROGRESS)
-        {
-            if (currentAnimalsNode.getIdPositive()==-1)
-            {
-                textViewQuestion.setText("Я думаю, твое животное - это "+currentAnimalsNode.getName()+". Это так?");
-                status=Status.PRESSED;
-            }
-            else
-            {
-                pointer=currentAnimalsNode.getIdPositive();
-                askQuestion();
-            }
-        }
-        else
-        {
-            textViewQuestion.setText("Я так и знал :)");
-            status=Status.INPROGRESS;
-            pointer=1;
-        }
+        pointer=currentAnimalsNode.getIdPositive();
+        askQuestion();
     }
 
     @OnClick(R.id.buttonNo)
     void onButtonNoClick()
     {
-
-        if (status==Status.INPROGRESS)
-        {
-            if (currentAnimalsNode.getIdNegative()==-1)
-            {
-                textViewQuestion.setText("Я думаю, твое животное - это "+currentAnimalsNode.getName()+". Это так?");
-                status=Status.PRESSED;
-            }
-            else
-            {
-                pointer=currentAnimalsNode.getIdNegative();
-                askQuestion();
-            }
-        }
-        else
-        {
-            textViewQuestion.setText("Помоги мне. Добавь свое животное и вопрос, который поможет мне отгадать животное");
-            for (View view:viewListForAdding)
-                view.setVisibility(View.VISIBLE);
-        }
+        pointer=currentAnimalsNode.getIdNegative();
+        askQuestion();
     }
 
     @OnClick(R.id.buttonSave)
@@ -127,5 +86,25 @@ public class MainActivity extends AppCompatActivity
         ((Button)findViewById(R.id.buttonStart)).setText("Начать с начала");
 
         Toast.makeText(this, "Done!", Toast.LENGTH_SHORT).show();
+    }
+
+    @OnClick(R.id.buttonGuessed)
+    void onButtonGuessedClick()
+    {
+        textViewQuestion.setText("Я так и знал :)");
+    }
+
+    @OnClick(R.id.buttonNoGuessed)
+    void onButtonNoGuessedClick()
+    {
+        textViewQuestion.setText("Помоги мне. Добавь свое животное и вопрос, который поможет мне отгадать животное");
+        for (View view:viewListForAdding)
+            view.setVisibility(View.VISIBLE);
+    }
+
+    private void askQuestion()
+    {
+        currentAnimalsNode=animalsDB.getAnimalsNodeById(pointer);
+        textViewQuestion.setText(currentAnimalsNode.getQuestion());
     }
 }
