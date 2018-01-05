@@ -32,18 +32,18 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/buttonNo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="Нет" />
-
-        <Button
             android:id="@+id/buttonYes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="Да" />
+
+        <Button
+            android:id="@+id/buttonNo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Нет" />
 
     </LinearLayout>
 
@@ -54,18 +54,18 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/buttonNoGuessed"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="Нет, это не мое животное" />
-
-        <Button
             android:id="@+id/buttonGuessed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="Да, это оно" />
+
+        <Button
+            android:id="@+id/buttonNoGuessed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Нет, это не мое животное" />
 
     </LinearLayout>
 

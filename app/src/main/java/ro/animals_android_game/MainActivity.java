@@ -3,7 +3,6 @@ package ro.animals_android_game;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,6 +28,12 @@ public class MainActivity extends AppCompatActivity
     @BindViews({R.id.editTextNewQuestion, R.id.editTextNewName,R.id.buttonSave})
     View[] viewListForAdding;
 
+    @BindViews({R.id.buttonGuessed, R.id.buttonNoGuessed})
+    View[] viewListGussed;
+
+    @BindViews({R.id.buttonYes ,R.id.buttonNo})
+    View[] viewListYesNo;
+
     private int pointer=1;//Указатель на текущую точку узла в базе данных
     private AnimalsDB animalsDB; //База данных
     private AnimalsNode currentAnimalsNode; // текущий узел бд
@@ -44,6 +49,12 @@ public class MainActivity extends AppCompatActivity
         animalsDB = new AnimalsDB(this);
 
         for (View view:viewListForAdding)
+            view.setVisibility(View.INVISIBLE);
+
+        for (View view: viewListGussed)
+            view.setVisibility(View.INVISIBLE);
+
+        for (View view: viewListYesNo)
             view.setVisibility(View.INVISIBLE);
 
         loadTestData();
@@ -83,7 +94,7 @@ public class MainActivity extends AppCompatActivity
         newAnimalNode.setName("Конь").setId(8);
         animalsDB.insert(newAnimalNode);
 
-        
+
     }
 
     @OnClick(R.id.buttonStart)
@@ -91,21 +102,62 @@ public class MainActivity extends AppCompatActivity
     {
         pointer=1;
         askQuestion();
+
+        for (View view: viewListYesNo)
+            view.setVisibility(View.VISIBLE);
+
+        for (View view:viewListForAdding)
+            view.setVisibility(View.INVISIBLE);
+
+        for (View view: viewListGussed)
+            view.setVisibility(View.INVISIBLE);
     }
 
     @OnClick(R.id.buttonYes)
     void onButtonYesClick()
     {
-        pointer=currentAnimalsNode.getIdPositive();
-        askQuestion();
+        if (currentAnimalsNode.getIdPositive()!=-1)
+        {
+            pointer=currentAnimalsNode.getIdPositive();
+            askQuestion();
+            Toast.makeText(this, String.valueOf(currentAnimalsNode.getIdPositive()), Toast.LENGTH_SHORT).show();
+
+            if (currentAnimalsNode.getIdPositive()==-1)
+            {
+                for (View view: viewListGussed)
+                    view.setVisibility(View.VISIBLE);
+
+                for (View view: viewListYesNo)
+                    view.setVisibility(View.INVISIBLE);
+
+                textViewQuestion.setText("Ваше животное - это "+currentAnimalsNode.getName()+"?");
+            }
+        }
+
         lastPressedAnswer=true;
     }
 
     @OnClick(R.id.buttonNo)
     void onButtonNoClick()
     {
-        pointer=currentAnimalsNode.getIdNegative();
-        askQuestion();
+        if (currentAnimalsNode.getIdNegative()!=-1)
+        {
+            pointer=currentAnimalsNode.getIdNegative();
+            askQuestion();
+
+            if (currentAnimalsNode.getIdNegative()==-1)
+            {
+                for (View view: viewListGussed)
+                    view.setVisibility(View.VISIBLE);
+
+                for (View view: viewListYesNo)
+                    view.setVisibility(View.INVISIBLE);
+
+                textViewQuestion.setText("Ваше животное - это "+currentAnimalsNode.getName()+"?");
+            }
+        }
+
+
         lastPressedAnswer=false;
     }
 
@@ -116,23 +168,29 @@ public class MainActivity extends AppCompatActivity
         newAnimalNode.setName(editTextName.getText().toString()).setQuestion(editTextNewQuestion.getText().toString());
         animalsDB.insert(newAnimalNode,pointer,lastPressedAnswer);
 
-        for (View view:viewListForAdding)
+        for (View view:viewListGussed)
             view.setVisibility(View.INVISIBLE);
-
     }
 
     @OnClick(R.id.buttonGuessed)
     void onButtonGuessedClick()
     {
         textViewQuestion.setText("Я так и знал :)");
+
+        for (View view: viewListGussed)
+            view.setVisibility(View.INVISIBLE);
     }
 
     @OnClick(R.id.buttonNoGuessed)
     void onButtonNoGuessedClick()
     {
         textViewQuestion.setText("Помоги мне. Добавь свое животное и вопрос, который поможет мне отгадать животное");
+
         for (View view:viewListForAdding)
             view.setVisibility(View.VISIBLE);
+
+        for (View view: viewListGussed)
+            view.setVisibility(View.INVISIBLE);
     }
 
     private void askQuestion()
