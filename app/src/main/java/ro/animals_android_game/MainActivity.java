@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity
     private AnimalsDB animalsDB; //База данных
     private AnimalsNode currentAnimalsNode; // текущий узел бд
 
-    Status status=Status.INPROGRESS ;
+    private boolean lastPressedAnswer; //true - yesButton, false - noButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -46,13 +46,50 @@ public class MainActivity extends AppCompatActivity
         for (View view:viewListForAdding)
             view.setVisibility(View.INVISIBLE);
 
+        loadTestData();
+    }
+    private void loadTestData()
+    {
+        AnimalsNode newAnimalNode = new AnimalsNode();
+        //1
+        newAnimalNode.setQuestion("Обитает на суше?");
+        animalsDB.insert(newAnimalNode);
+        //2
+        newAnimalNode = new AnimalsNode();
+        newAnimalNode.setQuestion("Живет в квартире или доме вместе с людьми?");
+        animalsDB.insert(newAnimalNode,1,true);
+        //3
+        newAnimalNode = new AnimalsNode();
+        newAnimalNode.setQuestion("Может мурчать?");
+        animalsDB.insert(newAnimalNode,2,true);
+        //4
+        newAnimalNode = new AnimalsNode();
+        newAnimalNode.setName("Кот");
+        animalsDB.insert(newAnimalNode,3,true);
+        //5
+        newAnimalNode = new AnimalsNode();
+        newAnimalNode.setName("Собака");
+        animalsDB.insert(newAnimalNode,3,false);
+        //6
+        newAnimalNode = new AnimalsNode();
+        newAnimalNode.setQuestion("Дает молоко?");
+        animalsDB.insert(newAnimalNode,2,false);
+        //7
+        newAnimalNode = new AnimalsNode();
+        newAnimalNode.setName("Корова");
+        animalsDB.insert(newAnimalNode,6,true);
+        //8
+        newAnimalNode = new AnimalsNode();
+        newAnimalNode.setName("Конь");
+        animalsDB.insert(newAnimalNode,6,false);
     }
 
     @OnClick(R.id.buttonStart)
     void onButtonStartClick()
     {
+        pointer=1;
         askQuestion();
-        ((Button)findViewById(R.id.buttonStart)).setText("Дальше");
+
     }
 
     @OnClick(R.id.buttonYes)
@@ -60,6 +97,7 @@ public class MainActivity extends AppCompatActivity
     {
         pointer=currentAnimalsNode.getIdPositive();
         askQuestion();
+        lastPressedAnswer=true;
     }
 
     @OnClick(R.id.buttonNo)
@@ -67,6 +105,7 @@ public class MainActivity extends AppCompatActivity
     {
         pointer=currentAnimalsNode.getIdNegative();
         askQuestion();
+        lastPressedAnswer=false;
     }
 
     @OnClick(R.id.buttonSave)
@@ -74,18 +113,11 @@ public class MainActivity extends AppCompatActivity
     {
         AnimalsNode newAnimalNode = new AnimalsNode();
         newAnimalNode.setName(editTextName.getText().toString()).setQuestion(editTextNewQuestion.getText().toString());
-
-        animalsDB.insert(newAnimalNode,pointer,true);
+        animalsDB.insert(newAnimalNode,pointer,lastPressedAnswer);
 
         for (View view:viewListForAdding)
             view.setVisibility(View.INVISIBLE);
 
-        status=Status.INPROGRESS;
-        pointer=1;
-
-        ((Button)findViewById(R.id.buttonStart)).setText("Начать с начала");
-
-        Toast.makeText(this, "Done!", Toast.LENGTH_SHORT).show();
     }
 
     @OnClick(R.id.buttonGuessed)
@@ -104,7 +136,14 @@ public class MainActivity extends AppCompatActivity
 
     private void askQuestion()
     {
-        currentAnimalsNode=animalsDB.getAnimalsNodeById(pointer);
-        textViewQuestion.setText(currentAnimalsNode.getQuestion());
+        try
+        {
+            currentAnimalsNode=animalsDB.getAnimalsNodeById(pointer);
+            textViewQuestion.setText(currentAnimalsNode.getQuestion());
+        }
+        catch (Exception e)
+        {
+            Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
+        }
     }
 }
