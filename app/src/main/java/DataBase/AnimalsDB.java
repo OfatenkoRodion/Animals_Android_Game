@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.util.ArrayList;
+
 public class AnimalsDB extends SQLiteOpenHelper
 {
     static final String BD_NAME ="Animals";
@@ -19,7 +21,7 @@ public class AnimalsDB extends SQLiteOpenHelper
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase)
     {
-        sqLiteDatabase.execSQL("CREATE table AnimalsTable(id integer PRIMARY KEY autoincrement,name text NOT NULL, question text NOT NULL, idPositive  integer, idNegative  integer);");
+        sqLiteDatabase.execSQL("CREATE table AnimalsTable(id integer PRIMARY KEY NOT NULL,name text, question text, idPositive  integer, idNegative  integer);");
     }
 
     @Override
@@ -31,6 +33,7 @@ public class AnimalsDB extends SQLiteOpenHelper
     public void insert(AnimalsNode animalsNode)
     {
         ContentValues contentValues = new ContentValues();
+        contentValues.put("id",animalsNode.getId());
         contentValues.put("name",animalsNode.getName());
         contentValues.put("question",animalsNode.getQuestion());
         contentValues.put("idPositive",animalsNode.getIdPositive());
@@ -40,6 +43,7 @@ public class AnimalsDB extends SQLiteOpenHelper
     public void insert(AnimalsNode animalsNode, int parent,boolean yesOrNo)
     {
         ContentValues contentValues = new ContentValues();
+        contentValues.put("id",animalsNode.getId());
         contentValues.put("name",animalsNode.getName());
         contentValues.put("question",animalsNode.getQuestion());
         this.getWritableDatabase().insert("AnimalsTable",null,contentValues);
@@ -65,7 +69,8 @@ public class AnimalsDB extends SQLiteOpenHelper
             {
                 AnimalsNode tempAnimalsNode = new AnimalsNode();
 
-                tempAnimalsNode.setName(cursor.getString(cursor.getColumnIndex("name")))
+                tempAnimalsNode.setId((cursor.getInt(cursor.getColumnIndex("id"))))
+                        .setName(cursor.getString(cursor.getColumnIndex("name")))
                         .setQuestion(cursor.getString(cursor.getColumnIndex("question")))
                         .setIdPositive(cursor.getInt(cursor.getColumnIndex("idPositive")))
                         .setIdNegative(cursor.getInt(cursor.getColumnIndex("idNegative")));
@@ -75,6 +80,29 @@ public class AnimalsDB extends SQLiteOpenHelper
             while (cursor.moveToNext());
         }
         return null;
+    }
+    public ArrayList<AnimalsNode> getAllAnimalsNode()
+    {
+        ArrayList<AnimalsNode> temp= new ArrayList<AnimalsNode>();
+
+        Cursor cursor = this.getWritableDatabase().query("AnimalsTable", null,null,null, null, null, null);
+        if (cursor.moveToFirst())
+        {
+            do
+            {
+                AnimalsNode tempAnimalsNode = new AnimalsNode();
+
+                tempAnimalsNode.setId((cursor.getInt(cursor.getColumnIndex("id"))))
+                        .setName(cursor.getString(cursor.getColumnIndex("name")))
+                        .setQuestion(cursor.getString(cursor.getColumnIndex("question")))
+                        .setIdPositive(cursor.getInt(cursor.getColumnIndex("idPositive")))
+                        .setIdNegative(cursor.getInt(cursor.getColumnIndex("idNegative")));
+
+                temp.add(tempAnimalsNode);
+            }
+            while (cursor.moveToNext());
+        }
+        return temp;
     }
 }
 

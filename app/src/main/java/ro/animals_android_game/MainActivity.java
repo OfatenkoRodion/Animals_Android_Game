@@ -52,36 +52,38 @@ public class MainActivity extends AppCompatActivity
     {
         AnimalsNode newAnimalNode = new AnimalsNode();
         //1
-        newAnimalNode.setQuestion("Обитает на суше?");
+        newAnimalNode.setQuestion("Обитает на суше?").setId(1).setIdPositive(2);
         animalsDB.insert(newAnimalNode);
         //2
         newAnimalNode = new AnimalsNode();
-        newAnimalNode.setQuestion("Живет в квартире или доме вместе с людьми?");
-        animalsDB.insert(newAnimalNode,1,true);
+        newAnimalNode.setQuestion("Живет в квартире или доме вместе с людьми?").setId(2).setIdPositive(3).setIdNegative(6);
+        animalsDB.insert(newAnimalNode);
         //3
         newAnimalNode = new AnimalsNode();
-        newAnimalNode.setQuestion("Может мурчать?");
-        animalsDB.insert(newAnimalNode,2,true);
+        newAnimalNode.setQuestion("Может мурчать?").setId(3).setIdPositive(4).setIdNegative(5);
+        animalsDB.insert(newAnimalNode);
         //4
         newAnimalNode = new AnimalsNode();
-        newAnimalNode.setName("Кот");
-        animalsDB.insert(newAnimalNode,3,true);
+        newAnimalNode.setName("Кот").setId(4);
+        animalsDB.insert(newAnimalNode);
         //5
         newAnimalNode = new AnimalsNode();
-        newAnimalNode.setName("Собака");
-        animalsDB.insert(newAnimalNode,3,false);
+        newAnimalNode.setName("Собака").setId(5);
+        animalsDB.insert(newAnimalNode);
         //6
         newAnimalNode = new AnimalsNode();
-        newAnimalNode.setQuestion("Дает молоко?");
-        animalsDB.insert(newAnimalNode,2,false);
+        newAnimalNode.setQuestion("Дает молоко?").setId(6).setIdPositive(7).setIdNegative(8);
+        animalsDB.insert(newAnimalNode);
         //7
         newAnimalNode = new AnimalsNode();
-        newAnimalNode.setName("Корова");
-        animalsDB.insert(newAnimalNode,6,true);
+        newAnimalNode.setName("Корова").setId(7);
+        animalsDB.insert(newAnimalNode);
         //8
         newAnimalNode = new AnimalsNode();
-        newAnimalNode.setName("Конь");
-        animalsDB.insert(newAnimalNode,6,false);
+        newAnimalNode.setName("Конь").setId(8);
+        animalsDB.insert(newAnimalNode);
+
+        
     }
 
     @OnClick(R.id.buttonStart)
@@ -89,7 +91,6 @@ public class MainActivity extends AppCompatActivity
     {
         pointer=1;
         askQuestion();
-
     }
 
     @OnClick(R.id.buttonYes)

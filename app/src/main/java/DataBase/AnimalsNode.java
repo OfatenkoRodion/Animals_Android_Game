@@ -4,8 +4,8 @@ package DataBase;
 public class AnimalsNode
 {
     private LazyImmutableInt id;
-    private String question;
-    private String name;
+    private String question= "";
+    private String name= "";
     private int idPositive=-1;
     private int idNegative=-1;
 
@@ -59,6 +59,12 @@ public class AnimalsNode
     public AnimalsNode setIdNegative(int idNegative)
     {
         this.idNegative = idNegative;
+        return this;
+    }
+
+    public AnimalsNode setId(int id)
+    {
+        this.id.setValue(id);
         return this;
     }
 }
