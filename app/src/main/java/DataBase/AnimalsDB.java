@@ -40,7 +40,7 @@ public class AnimalsDB extends SQLiteOpenHelper
         contentValues.put("idNegative",animalsNode.getIdNegative());
         this.getWritableDatabase().insert("AnimalsTable",null,contentValues);
     }
-    public void insert(AnimalsNode animalsNode, int parent,boolean yesOrNo)
+    public void insert2(AnimalsNode animalsNode, int parent,boolean yesOrNo)
     {
         ContentValues contentValues = new ContentValues();
         contentValues.put("id",animalsNode.getId());
@@ -57,6 +57,27 @@ public class AnimalsDB extends SQLiteOpenHelper
                 else
                 this.getWritableDatabase().execSQL("UPDATE AnimalsTable SET idNegative = "+cursor.getInt(0)+" WHERE id =" + parent + ";");
             }
+    }
+    public void setIdPositiveById(int id,int newIdPositive)
+    {
+        this.getWritableDatabase().execSQL("UPDATE AnimalsTable SET idPositive = "+newIdPositive+" WHERE id =" + id + ";");
+    }
+
+    public void setIdNegativeById(int id,int newIdNegative)
+    {
+        this.getWritableDatabase().execSQL("UPDATE AnimalsTable SET idNegative = "+newIdNegative+" WHERE id =" + id + ";");
+    }
+
+    public int getMaxId()
+    {
+        Cursor cursor=this.getWritableDatabase().rawQuery("SELECT max(id) from AnimalsTable ",null);
+        if (cursor != null)
+            if(cursor.moveToFirst())
+            {
+                return cursor.getInt(0);
+
+            }
+        return -1;
     }
     public AnimalsNode getAnimalsNodeById(int id)
     {

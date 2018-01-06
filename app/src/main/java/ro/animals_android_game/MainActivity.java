@@ -3,6 +3,7 @@ package ro.animals_android_game;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,10 +21,10 @@ public class MainActivity extends AppCompatActivity
     TextView textViewQuestion;
 
     @BindView(R.id.editTextNewQuestion)
-    TextView editTextNewQuestion;
+    EditText editTextNewQuestion;
 
     @BindView(R.id.editTextNewName)
-    TextView editTextName;
+    EditText editTextName;
 
     @BindViews({R.id.editTextNewQuestion, R.id.editTextNewName,R.id.buttonSave})
     View[] viewListForAdding;
@@ -38,7 +39,6 @@ public class MainActivity extends AppCompatActivity
     private AnimalsDB animalsDB; //База данных
     private AnimalsNode currentAnimalsNode; // текущий узел бд
 
-    private boolean lastPressedAnswer; //true - yesButton, false - noButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -120,7 +120,6 @@ public class MainActivity extends AppCompatActivity
         {
             pointer=currentAnimalsNode.getIdPositive();
             askQuestion();
-            Toast.makeText(this, String.valueOf(currentAnimalsNode.getIdPositive()), Toast.LENGTH_SHORT).show();
 
             if (currentAnimalsNode.getIdPositive()==-1)
             {
@@ -133,8 +132,6 @@ public class MainActivity extends AppCompatActivity
                 textViewQuestion.setText("Ваше животное - это "+currentAnimalsNode.getName()+"?");
             }
         }
-
-        lastPressedAnswer=true;
     }
 
     @OnClick(R.id.buttonNo)
@@ -156,20 +153,26 @@ public class MainActivity extends AppCompatActivity
                 textViewQuestion.setText("Ваше животное - это "+currentAnimalsNode.getName()+"?");
             }
         }
-
-
-        lastPressedAnswer=false;
     }
 
     @OnClick(R.id.buttonSave)
     void onButtonSaveClick()
     {
-        AnimalsNode newAnimalNode = new AnimalsNode();
-        newAnimalNode.setName(editTextName.getText().toString()).setQuestion(editTextNewQuestion.getText().toString());
-        animalsDB.insert(newAnimalNode,pointer,lastPressedAnswer);
+        int newIdValue=animalsDB.getMaxId()+1;
 
-        for (View view:viewListGussed)
+        AnimalsNode newAnimalNode = new AnimalsNode();
+
+        newAnimalNode.setName(editTextName.getText().toString())
+                .setQuestion(editTextNewQuestion.getText().toString())
+                .setId(newIdValue);
+        animalsDB.insert(newAnimalNode);
+
+        animalsDB.setIdNegativeById(pointer,newIdValue);
+
+        for (View view:viewListForAdding)
             view.setVisibility(View.INVISIBLE);
+
+        textViewQuestion.setText("");
     }
 
     @OnClick(R.id.buttonGuessed)
