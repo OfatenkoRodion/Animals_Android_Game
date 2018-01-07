@@ -29,7 +29,6 @@ public class AnimalsDB extends SQLiteOpenHelper
     {
 
     }
-
     public void insert(AnimalsNode animalsNode)
     {
         ContentValues contentValues = new ContentValues();
@@ -40,34 +39,18 @@ public class AnimalsDB extends SQLiteOpenHelper
         contentValues.put("idNegative",animalsNode.getIdNegative());
         this.getWritableDatabase().insert("AnimalsTable",null,contentValues);
     }
-    public void insert2(AnimalsNode animalsNode, int parent,boolean yesOrNo)
-    {
-        ContentValues contentValues = new ContentValues();
-        contentValues.put("id",animalsNode.getId());
-        contentValues.put("name",animalsNode.getName());
-        contentValues.put("question",animalsNode.getQuestion());
-        this.getWritableDatabase().insert("AnimalsTable",null,contentValues);
-
-        Cursor cursor=this.getWritableDatabase().rawQuery("SELECT max(id) from AnimalsTable ",null);
-        if (cursor != null)
-            if(cursor.moveToFirst())
-            {
-                if (yesOrNo)
-                this.getWritableDatabase().execSQL("UPDATE AnimalsTable SET idPositive = "+cursor.getInt(0)+" WHERE id =" + parent + ";");
-                else
-                this.getWritableDatabase().execSQL("UPDATE AnimalsTable SET idNegative = "+cursor.getInt(0)+" WHERE id =" + parent + ";");
-            }
-    }
     public void setIdPositiveById(int id,int newIdPositive)
     {
         this.getWritableDatabase().execSQL("UPDATE AnimalsTable SET idPositive = "+newIdPositive+" WHERE id =" + id + ";");
     }
-
     public void setIdNegativeById(int id,int newIdNegative)
     {
         this.getWritableDatabase().execSQL("UPDATE AnimalsTable SET idNegative = "+newIdNegative+" WHERE id =" + id + ";");
     }
-
+    public void setQuestionById(int id,String question)
+    {
+        this.getWritableDatabase().execSQL("UPDATE AnimalsTable SET question = '"+question+"' WHERE id =" + id + ";");
+    }
     public int getMaxId()
     {
         Cursor cursor=this.getWritableDatabase().rawQuery("SELECT max(id) from AnimalsTable ",null);
@@ -101,29 +84,6 @@ public class AnimalsDB extends SQLiteOpenHelper
             while (cursor.moveToNext());
         }
         return null;
-    }
-    public ArrayList<AnimalsNode> getAllAnimalsNode()
-    {
-        ArrayList<AnimalsNode> temp= new ArrayList<AnimalsNode>();
-
-        Cursor cursor = this.getWritableDatabase().query("AnimalsTable", null,null,null, null, null, null);
-        if (cursor.moveToFirst())
-        {
-            do
-            {
-                AnimalsNode tempAnimalsNode = new AnimalsNode();
-
-                tempAnimalsNode.setId((cursor.getInt(cursor.getColumnIndex("id"))))
-                        .setName(cursor.getString(cursor.getColumnIndex("name")))
-                        .setQuestion(cursor.getString(cursor.getColumnIndex("question")))
-                        .setIdPositive(cursor.getInt(cursor.getColumnIndex("idPositive")))
-                        .setIdNegative(cursor.getInt(cursor.getColumnIndex("idNegative")));
-
-                temp.add(tempAnimalsNode);
-            }
-            while (cursor.moveToNext());
-        }
-        return temp;
     }
 }
 

@@ -158,16 +158,20 @@ public class MainActivity extends AppCompatActivity
     @OnClick(R.id.buttonSave)
     void onButtonSaveClick()
     {
-        int newIdValue=animalsDB.getMaxId()+1;
+        int maxIdValue=animalsDB.getMaxId();
+        animalsDB.setIdPositiveById(pointer,maxIdValue+1);
+        animalsDB.setIdNegativeById(pointer,maxIdValue+2);
+        animalsDB.setQuestionById(pointer,editTextNewQuestion.getText().toString());
 
         AnimalsNode newAnimalNode = new AnimalsNode();
-
         newAnimalNode.setName(editTextName.getText().toString())
-                .setQuestion(editTextNewQuestion.getText().toString())
-                .setId(newIdValue);
+                .setId(maxIdValue+1);
         animalsDB.insert(newAnimalNode);
 
-        animalsDB.setIdNegativeById(pointer,newIdValue);
+        newAnimalNode = new AnimalsNode();
+        newAnimalNode.setName(currentAnimalsNode.getName())
+                .setId(maxIdValue+2);
+        animalsDB.insert(newAnimalNode);
 
         for (View view:viewListForAdding)
             view.setVisibility(View.INVISIBLE);
