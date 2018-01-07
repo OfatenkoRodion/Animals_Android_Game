@@ -21,6 +21,7 @@ public class AnimalsDB extends SQLiteOpenHelper
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase)
     {
+        //!!!!!!! Ключ (id) не auto increment, всz установка id идет руками
         sqLiteDatabase.execSQL("CREATE table AnimalsTable(id integer PRIMARY KEY NOT NULL,name text, question text, idPositive  integer, idNegative  integer);");
     }
 
@@ -29,6 +30,8 @@ public class AnimalsDB extends SQLiteOpenHelper
     {
 
     }
+
+    //Вносит узлы в БД
     public void insert(AnimalsNode animalsNode)
     {
         ContentValues contentValues = new ContentValues();

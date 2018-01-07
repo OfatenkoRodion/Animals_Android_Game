@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="*Красивый текст с правилами*"
-        android:layout_gravity="center" />
+        android:text="Привет! Загадай животное и держи его название про себя в голове. \r\n Я буду задавать наводящие вопросы и попробую его угадать"
+        android:layout_gravity="center"
+        android:gravity="center" />
 
     <Button
         android:id="@+id/buttonStart"
@@ -22,7 +22,7 @@
         android:id="@+id/textViewQuestion"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="*Место под вопрос*"
+        android:textAppearance="@style/TextAppearance.AppCompat.Headline"
         android:layout_gravity="center" />
 
     <LinearLayout
@@ -71,17 +71,19 @@
 
     <EditText
         android:id="@+id/editTextNewQuestion"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="*укажите вопрос*" />
+        android:hint="Тут напиши вопрос про животное"
+        android:background="@color/colorPrimary" />
 
     <EditText
         android:id="@+id/editTextNewName"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="*укажите название животного" />
+        android:hint="Тут напиши животное, которое ты задумал. Оно будет положительным ответом на твой вопрос"
+        android:background="@color/colorPrimary" />
 
     <Button
         android:id="@+id/buttonSave"

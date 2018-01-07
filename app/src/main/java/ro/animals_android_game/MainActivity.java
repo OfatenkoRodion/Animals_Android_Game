@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity
     @OnClick(R.id.buttonStart)
     void onButtonStartClick()
     {
-        pointer=1;
+        pointer=1; //сброс указателя на самое начало
         askQuestion();
 
         for (View view: viewListYesNo)
@@ -116,60 +116,65 @@ public class MainActivity extends AppCompatActivity
     @OnClick(R.id.buttonYes)
     void onButtonYesClick()
     {
-        if (currentAnimalsNode.getIdPositive()!=-1)
+        pointer=currentAnimalsNode.getIdPositive(); //смещаем указатель на узел по положительной ветке
+        askQuestion(); //Теперь указатель указывает на текущий узел
+
+        // Нужно проверить не спустились ли мы до самого конца дерева.
+        // Если это конец, то движение дальше невозможно. Программа должна сделать предположение о животном
+        if (currentAnimalsNode.getIdPositive()==-1)
         {
-            pointer=currentAnimalsNode.getIdPositive();
-            askQuestion();
+            for (View view: viewListGussed)
+                view.setVisibility(View.VISIBLE);
 
-            if (currentAnimalsNode.getIdPositive()==-1)
-            {
-                for (View view: viewListGussed)
-                    view.setVisibility(View.VISIBLE);
+            for (View view: viewListYesNo)
+                view.setVisibility(View.INVISIBLE);
 
-                for (View view: viewListYesNo)
-                    view.setVisibility(View.INVISIBLE);
-
-                textViewQuestion.setText("Ваше животное - это "+currentAnimalsNode.getName()+"?");
-            }
+            textViewQuestion.setText("Ваше животное - это "+currentAnimalsNode.getName()+"?");
         }
     }
 
     @OnClick(R.id.buttonNo)
     void onButtonNoClick()
     {
-        if (currentAnimalsNode.getIdNegative()!=-1)
+        pointer=currentAnimalsNode.getIdNegative();//смещаем указатель на узел по отрицательно ветке
+        askQuestion(); //Теперь указатель указывает на текущий узел
+
+        // Нужно проверить не спустились ли мы до самого конца дерева.
+        // Если это конец, то движение дальше невозможно. Программа должна сделать предположение о животном
+        if (currentAnimalsNode.getIdNegative()==-1)
         {
-            pointer=currentAnimalsNode.getIdNegative();
-            askQuestion();
+            for (View view: viewListGussed)
+                view.setVisibility(View.VISIBLE);
 
-            if (currentAnimalsNode.getIdNegative()==-1)
-            {
-                for (View view: viewListGussed)
-                    view.setVisibility(View.VISIBLE);
+            for (View view: viewListYesNo)
+                view.setVisibility(View.INVISIBLE);
 
-                for (View view: viewListYesNo)
-                    view.setVisibility(View.INVISIBLE);
-
-                textViewQuestion.setText("Ваше животное - это "+currentAnimalsNode.getName()+"?");
-            }
+            textViewQuestion.setText("Ваше животное - это "+currentAnimalsNode.getName()+"?");
         }
     }
 
     @OnClick(R.id.buttonSave)
     void onButtonSaveClick()
     {
+        // Получаем максимальный id в базе данных.
+        // Так как мы устанавливаем id для новых узлов вручную, то это гарантирует, что maxId+1 - Unique
         int maxIdValue=animalsDB.getMaxId();
+
+        // Обновляем конечный узел по указателю.
+        // После добавления двух узлов для положительного и отрицательного узлов с правильными id, узел по указателю перестанет быть конечным
         animalsDB.setIdPositiveById(pointer,maxIdValue+1);
         animalsDB.setIdNegativeById(pointer,maxIdValue+2);
-        animalsDB.setQuestionById(pointer,editTextNewQuestion.getText().toString());
+        animalsDB.setQuestionById(pointer,editTextNewQuestion.getText().toString());//Записываем вопрос, в зависимости от которого будет продвижение указателя
 
+        // Новый узел, на который будут переходить после положительного ответа
         AnimalsNode newAnimalNode = new AnimalsNode();
-        newAnimalNode.setName(editTextName.getText().toString())
+        newAnimalNode.setName(editTextName.getText().toString())//В название животного записывает то, что указал пользователь. Это новое животное в Бд
                 .setId(maxIdValue+1);
         animalsDB.insert(newAnimalNode);
 
+        // Новый узел, на который будут переходить после отрицательного ответа
         newAnimalNode = new AnimalsNode();
-        newAnimalNode.setName(currentAnimalsNode.getName())
+        newAnimalNode.setName(currentAnimalsNode.getName())//Не теряем старое конечное животное, дабавляем его тут. Тем самым, опускаем вниз по дереву
                 .setId(maxIdValue+2);
         animalsDB.insert(newAnimalNode);
 
@@ -202,14 +207,7 @@ public class MainActivity extends AppCompatActivity
 
     private void askQuestion()
     {
-        try
-        {
-            currentAnimalsNode=animalsDB.getAnimalsNodeById(pointer);
-            textViewQuestion.setText(currentAnimalsNode.getQuestion());
-        }
-        catch (Exception e)
-        {
-            Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
-        }
+        currentAnimalsNode=animalsDB.getAnimalsNodeById(pointer);
+        textViewQuestion.setText(currentAnimalsNode.getQuestion());
     }
 }
