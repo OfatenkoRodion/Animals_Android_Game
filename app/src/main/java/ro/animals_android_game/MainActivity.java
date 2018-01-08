@@ -63,6 +63,12 @@ public class MainActivity extends AppCompatActivity
         for (View view: viewListYesNo)
             view.setVisibility(View.INVISIBLE);
 
+        if (savedInstanceState != null)
+        {
+            pointer = savedInstanceState.getInt("POINTER");
+            askQuestion();
+        }
+
     }
     private void prepareDB()
     {
@@ -139,6 +145,17 @@ public class MainActivity extends AppCompatActivity
     void onButtonSaveClick()
     {
         SQLiteDatabase db=animalsDB.getWritableDatabase();
+
+        String qe=editTextNewQuestion.getText().toString();
+        String name=editTextName.getText().toString();
+
+        if(qe.equals("") || name.equals(""))
+        {
+            for (View view:viewListForAdding)
+                view.setVisibility(View.INVISIBLE);
+            textViewQuestion.setText("");
+            return;
+        }
         db.beginTransaction();
         try
         {
@@ -171,11 +188,6 @@ public class MainActivity extends AppCompatActivity
             db.endTransaction();
             Toast.makeText(this, "Готово!", Toast.LENGTH_SHORT).show();
         }
-
-        for (View view:viewListForAdding)
-            view.setVisibility(View.INVISIBLE);
-
-        textViewQuestion.setText("");
     }
 
     @OnClick(R.id.buttonGuessed)
@@ -203,5 +215,12 @@ public class MainActivity extends AppCompatActivity
     {
         currentAnimalsNode=animalsDB.getAnimalsNodeById(pointer);
         textViewQuestion.setText(currentAnimalsNode.getQuestion());
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState)
+    {
+        super.onSaveInstanceState(outState);
+        outState.putInt("POINTER",pointer);
     }
 }

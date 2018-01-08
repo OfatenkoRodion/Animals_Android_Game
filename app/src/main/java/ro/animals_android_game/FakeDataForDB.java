@@ -10,7 +10,7 @@ public class FakeDataForDB
     {
         AnimalsNode newAnimalNode = new AnimalsNode();
         //1
-        newAnimalNode.setQuestion("Обитает на суше?").setId(1).setIdPositive(2);
+        newAnimalNode.setQuestion("Обитает на суше?").setId(1).setIdPositive(2).setIdNegative(9);
         animalsDB.insert(newAnimalNode);
         //2
         newAnimalNode = new AnimalsNode();
@@ -39,6 +39,18 @@ public class FakeDataForDB
         //8
         newAnimalNode = new AnimalsNode();
         newAnimalNode.setName("Конь").setId(8);
+        animalsDB.insert(newAnimalNode);
+        //9
+        newAnimalNode = new AnimalsNode();
+        newAnimalNode.setQuestion("Дышит жабрами?").setId(9).setIdPositive(10).setIdNegative(11);
+        animalsDB.insert(newAnimalNode);
+        //10
+        newAnimalNode = new AnimalsNode();
+        newAnimalNode.setName("Акула").setId(10);
+        animalsDB.insert(newAnimalNode);
+        //11
+        newAnimalNode = new AnimalsNode();
+        newAnimalNode.setName("Дельфин").setId(11);
         animalsDB.insert(newAnimalNode);
     }
 }
