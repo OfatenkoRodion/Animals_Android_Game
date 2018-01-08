@@ -1,3 +1,12 @@
 <resources>
-    <string name="app_name">Animals_Android_Game</string>
+    <string name="app_name">Animals Master PRO v1.0</string>
+    <string name="hello">Привет! Загадай животное и держи его название про себя в голове. \n  Я буду задавать наводящие вопросы и попробую его угадать</string>
+    <string name="ToBegin">Начать с начала</string>
+    <string name="Yes">Да</string>
+    <string name="No">Нет</string>
+    <string name="YesItIs">Да, это оно</string>
+    <string name="NoItIsNot">Нет, это не мое животное</string>
+    <string name="QuestionHelp">Тут напиши вопрос про животное</string>
+    <string name="AnimalNameHelp">Тут напиши животное, которое ты задумал. Оно будет положительным ответом на твой вопрос</string>
+    <string name="Save">Сохранить</string>
 </resources>

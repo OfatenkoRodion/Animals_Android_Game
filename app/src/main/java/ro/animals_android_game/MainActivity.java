@@ -1,5 +1,6 @@
 package ro.animals_android_game;
 
+import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -156,27 +157,38 @@ public class MainActivity extends AppCompatActivity
     @OnClick(R.id.buttonSave)
     void onButtonSaveClick()
     {
-        // Получаем максимальный id в базе данных.
-        // Так как мы устанавливаем id для новых узлов вручную, то это гарантирует, что maxId+1 - Unique
-        int maxIdValue=animalsDB.getMaxId();
+        SQLiteDatabase db=animalsDB.getWritableDatabase();
+        db.beginTransaction();
+        try
+        {
+            // Получаем максимальный id в базе данных.
+            // Так как мы устанавливаем id для новых узлов вручную, то это гарантирует, что maxId+1 - Unique
+            int maxIdValue = animalsDB.getMaxId();
 
-        // Обновляем конечный узел по указателю.
-        // После добавления двух узлов для положительного и отрицательного узлов с правильными id, узел по указателю перестанет быть конечным
-        animalsDB.setIdPositiveById(pointer,maxIdValue+1);
-        animalsDB.setIdNegativeById(pointer,maxIdValue+2);
-        animalsDB.setQuestionById(pointer,editTextNewQuestion.getText().toString());//Записываем вопрос, в зависимости от которого будет продвижение указателя
+            // Обновляем конечный узел по указателю.
+            // После добавления двух узлов для положительного и отрицательного узлов с правильными id, узел по указателю перестанет быть конечным
+            animalsDB.setIdPositiveById(pointer, maxIdValue + 1);
+            animalsDB.setIdNegativeById(pointer, maxIdValue + 2);
+            animalsDB.setQuestionById(pointer, editTextNewQuestion.getText().toString());//Записываем вопрос, в зависимости от которого будет продвижение указателя
 
-        // Новый узел, на который будут переходить после положительного ответа
-        AnimalsNode newAnimalNode = new AnimalsNode();
-        newAnimalNode.setName(editTextName.getText().toString())//В название животного записывает то, что указал пользователь. Это новое животное в Бд
-                .setId(maxIdValue+1);
-        animalsDB.insert(newAnimalNode);
+            // Новый узел, на который будут переходить после положительного ответа
+            AnimalsNode newAnimalNode = new AnimalsNode();
+            newAnimalNode.setName(editTextName.getText().toString())//В название животного записывает то, что указал пользователь. Это новое животное в Бд
+                    .setId(maxIdValue + 1);
+            animalsDB.insert(newAnimalNode);
 
-        // Новый узел, на который будут переходить после отрицательного ответа
-        newAnimalNode = new AnimalsNode();
-        newAnimalNode.setName(currentAnimalsNode.getName())//Не теряем старое конечное животное, дабавляем его тут. Тем самым, опускаем вниз по дереву
-                .setId(maxIdValue+2);
-        animalsDB.insert(newAnimalNode);
+            // Новый узел, на который будут переходить после отрицательного ответа
+            newAnimalNode = new AnimalsNode();
+            newAnimalNode.setName(currentAnimalsNode.getName())//Не теряем старое конечное животное, дабавляем его тут. Тем самым, опускаем вниз по дереву
+                    .setId(maxIdValue + 2);
+            animalsDB.insert(newAnimalNode);
+
+            db.setTransactionSuccessful();
+        }
+        finally
+        {
+            db.endTransaction();
+        }
 
         for (View view:viewListForAdding)
             view.setVisibility(View.INVISIBLE);
@@ -196,7 +208,7 @@ public class MainActivity extends AppCompatActivity
     @OnClick(R.id.buttonNoGuessed)
     void onButtonNoGuessedClick()
     {
-        textViewQuestion.setText("Помоги мне. Добавь свое животное и вопрос, который поможет мне отгадать животное");
+        textViewQuestion.setText("Помоги мне. Добавь свое животное и вопрос, который поможет мне отгадать животное. Или начинай с начала.");
 
         for (View view:viewListForAdding)
             view.setVisibility(View.VISIBLE);

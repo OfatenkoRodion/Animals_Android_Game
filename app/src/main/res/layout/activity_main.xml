@@ -7,7 +7,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Привет! Загадай животное и держи его название про себя в голове. \r\n Я буду задавать наводящие вопросы и попробую его угадать"
+        android:text="@string/hello"
         android:layout_gravity="center"
         android:gravity="center" />
 
@@ -15,7 +15,7 @@
         android:id="@+id/buttonStart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Начать с начала"
+        android:text="@string/ToBegin"
         android:layout_gravity="center" />
 
     <TextView
@@ -23,7 +23,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-        android:layout_gravity="center" />
+        android:layout_gravity="center"
+        android:gravity="center"/>
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -36,14 +37,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Да" />
+            android:text="@string/Yes" />
 
         <Button
             android:id="@+id/buttonNo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Нет" />
+            android:text="@string/No" />
 
     </LinearLayout>
 
@@ -58,14 +59,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Да, это оно" />
+            android:text="@string/YesItIs" />
 
         <Button
             android:id="@+id/buttonNoGuessed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Нет, это не мое животное" />
+            android:text="@string/NoItIsNot" />
 
     </LinearLayout>
 
@@ -74,22 +75,30 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:hint="Тут напиши вопрос про животное"
-        android:background="@color/colorPrimary" />
+        android:hint="@string/QuestionHelp"
+        android:background="@drawable/edit_text_style"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="15dp"
+        android:layout_marginRight="10dp"/>
 
     <EditText
         android:id="@+id/editTextNewName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:hint="Тут напиши животное, которое ты задумал. Оно будет положительным ответом на твой вопрос"
-        android:background="@color/colorPrimary" />
+        android:hint="@string/AnimalNameHelp"
+        android:background="@drawable/edit_text_style"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="15dp"
+        android:layout_marginRight="10dp"/>
 
     <Button
         android:id="@+id/buttonSave"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Save"
+        android:text="@string/Save"
         android:layout_gravity="center" />
 
 </LinearLayout>
