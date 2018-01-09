@@ -8,7 +8,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import java.util.ArrayList;
 
-public class AnimalsDB extends SQLiteOpenHelper
+import ro.animals_android_game.iDataSource;
+
+public class AnimalsDB extends SQLiteOpenHelper implements iDataSource
 {
     static final String BD_NAME ="Animals";
     static final int VERSION =1;
