@@ -44,6 +44,42 @@ public class AnimalsDB extends SQLiteOpenHelper implements iDataSource
         contentValues.put("idNegative",animalsNode.getIdNegative());
         this.getWritableDatabase().insert("AnimalsTable",null,contentValues);
     }
+    public void insert(int pointer,String question,String newName,String oldName)
+    {
+        SQLiteDatabase db=this.getWritableDatabase();
+        db.beginTransaction();
+        try
+        {
+            // Получаем максимальный id в базе данных.
+            // Так как мы устанавливаем id для новых узлов вручную, то это гарантирует, что maxId+1 - Unique
+            int maxIdValue = getMaxId();
+
+            // Обновляем конечный узел по указателю.
+            // После добавления двух узлов для положительного и отрицательного узлов с правильными id, узел по указателю перестанет быть конечным
+            setIdPositiveById(pointer, maxIdValue + 1);
+            setIdNegativeById(pointer, maxIdValue + 2);
+            setQuestionById(pointer, question);//Записываем вопрос, в зависимости от которого будет продвижение указателя
+
+            // Новый узел, на который будут переходить после положительного ответа
+            AnimalsNode newAnimalNode = new AnimalsNode();
+            newAnimalNode.setName(newName)//В название животного записывает то, что указал пользователь. Это новое животное в Бд
+                    .setId(maxIdValue + 1);
+            insert(newAnimalNode);
+
+            // Новый узел, на который будут переходить после отрицательного ответа
+            newAnimalNode = new AnimalsNode();
+            newAnimalNode.setName(oldName)//Не теряем старое конечное животное, дабавляем его тут. Тем самым, опускаем вниз по дереву
+                    .setId(maxIdValue + 2);
+            insert(newAnimalNode);
+
+            db.setTransactionSuccessful();
+        }
+        finally
+        {
+            db.endTransaction();
+        }
+    }
+
     public void setIdPositiveById(int id,int newIdPositive)
     {
         this.getWritableDatabase().execSQL("UPDATE AnimalsTable SET idPositive = "+newIdPositive+" WHERE id =" + id + ";");
