@@ -17,6 +17,7 @@ import butterknife.BindView;
 import butterknife.BindViews;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import rx.functions.Action1;
 
 public class MainActivity extends AppCompatActivity
 {
@@ -39,11 +40,9 @@ public class MainActivity extends AppCompatActivity
     @BindViews({R.id.buttonYes ,R.id.buttonNo})
     View[] viewListYesNo;
 
-    private int pointer=1;//Указатель на текущую точку узла в базе данных
-    private AnimalsDB animalsDB; //База данных
-    private AnimalsNode currentAnimalsNode; // текущий узел бд
-
     private final String TRIGGER = "trigger";
+
+    private Presenter presenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -51,8 +50,28 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        animalsDB = new AnimalsDB(this);
-        prepareDB();
+
+        AnimalsDB animalsDB = new AnimalsDB(this);
+        prepareDB(animalsDB);
+
+        presenter=new Presenter(animalsDB);
+
+        Action1<String> onNextActionQuestion = s -> textViewQuestion.setText(s);
+
+        presenter.subscribeOnQuestions(onNextActionQuestion);
+
+        Action1<String> onNextActionName = s ->{
+
+            for (View view: viewListGussed)
+                view.setVisibility(View.VISIBLE);
+
+            for (View view: viewListYesNo)
+                view.setVisibility(View.INVISIBLE);
+
+                textViewQuestion.setText("Ваше животное - это "+s+"?");
+        };
+
+        presenter.subscribeOnNames(onNextActionName);
 
         for (View view:viewListForAdding)
             view.setVisibility(View.INVISIBLE);
@@ -63,14 +82,8 @@ public class MainActivity extends AppCompatActivity
         for (View view: viewListYesNo)
             view.setVisibility(View.INVISIBLE);
 
-        if (savedInstanceState != null)
-        {
-            pointer = savedInstanceState.getInt("POINTER");
-            askQuestion();
-        }
-
     }
-    private void prepareDB()
+    private void prepareDB(AnimalsDB animalsDB)
     {
         SharedPreferences sPref = getPreferences(MODE_PRIVATE);
         String savedText = sPref.getString(TRIGGER, "");
@@ -88,8 +101,7 @@ public class MainActivity extends AppCompatActivity
     @OnClick(R.id.buttonStart)
     void onButtonStartClick()
     {
-        pointer=1; //сброс указателя на самое начало
-        askQuestion();
+        presenter.returnToBegin();
 
         for (View view: viewListYesNo)
             view.setVisibility(View.VISIBLE);
@@ -104,90 +116,13 @@ public class MainActivity extends AppCompatActivity
     @OnClick(R.id.buttonYes)
     void onButtonYesClick()
     {
-        pointer=currentAnimalsNode.getIdPositive(); //смещаем указатель на узел по положительной ветке
-        askQuestion(); //Теперь указатель указывает на текущий узел
-
-        // Нужно проверить не спустились ли мы до самого конца дерева.
-        // Если это конец, то движение дальше невозможно. Программа должна сделать предположение о животном
-        if (currentAnimalsNode.getIdPositive()==-1)
-        {
-            for (View view: viewListGussed)
-                view.setVisibility(View.VISIBLE);
-
-            for (View view: viewListYesNo)
-                view.setVisibility(View.INVISIBLE);
-
-            textViewQuestion.setText("Ваше животное - это "+currentAnimalsNode.getName()+"?");
-        }
+        presenter.makePositiveStep();
     }
 
     @OnClick(R.id.buttonNo)
     void onButtonNoClick()
     {
-        pointer=currentAnimalsNode.getIdNegative();//смещаем указатель на узел по отрицательно ветке
-        askQuestion(); //Теперь указатель указывает на текущий узел
-
-        // Нужно проверить не спустились ли мы до самого конца дерева.
-        // Если это конец, то движение дальше невозможно. Программа должна сделать предположение о животном
-        if (currentAnimalsNode.getIdNegative()==-1)
-        {
-            for (View view: viewListGussed)
-                view.setVisibility(View.VISIBLE);
-
-            for (View view: viewListYesNo)
-                view.setVisibility(View.INVISIBLE);
-
-            textViewQuestion.setText("Ваше животное - это "+currentAnimalsNode.getName()+"?");
-        }
-    }
-
-    @OnClick(R.id.buttonSave)
-    void onButtonSaveClick()
-    {
-        SQLiteDatabase db=animalsDB.getWritableDatabase();
-
-        String qe=editTextNewQuestion.getText().toString();
-        String name=editTextName.getText().toString();
-
-        if(qe.equals("") || name.equals(""))
-        {
-            for (View view:viewListForAdding)
-                view.setVisibility(View.INVISIBLE);
-            textViewQuestion.setText("");
-            return;
-        }
-        db.beginTransaction();
-        try
-        {
-            // Получаем максимальный id в базе данных.
-            // Так как мы устанавливаем id для новых узлов вручную, то это гарантирует, что maxId+1 - Unique
-            int maxIdValue = animalsDB.getMaxId();
-
-            // Обновляем конечный узел по указателю.
-            // После добавления двух узлов для положительного и отрицательного узлов с правильными id, узел по указателю перестанет быть конечным
-            animalsDB.setIdPositiveById(pointer, maxIdValue + 1);
-            animalsDB.setIdNegativeById(pointer, maxIdValue + 2);
-            animalsDB.setQuestionById(pointer, editTextNewQuestion.getText().toString());//Записываем вопрос, в зависимости от которого будет продвижение указателя
-
-            // Новый узел, на который будут переходить после положительного ответа
-            AnimalsNode newAnimalNode = new AnimalsNode();
-            newAnimalNode.setName(editTextName.getText().toString())//В название животного записывает то, что указал пользователь. Это новое животное в Бд
-                    .setId(maxIdValue + 1);
-            animalsDB.insert(newAnimalNode);
-
-            // Новый узел, на который будут переходить после отрицательного ответа
-            newAnimalNode = new AnimalsNode();
-            newAnimalNode.setName(currentAnimalsNode.getName())//Не теряем старое конечное животное, дабавляем его тут. Тем самым, опускаем вниз по дереву
-                    .setId(maxIdValue + 2);
-            animalsDB.insert(newAnimalNode);
-
-            db.setTransactionSuccessful();
-        }
-        finally
-        {
-            db.endTransaction();
-            Toast.makeText(this, "Готово!", Toast.LENGTH_SHORT).show();
-        }
+        presenter.makeNegativeStep();
     }
 
     @OnClick(R.id.buttonGuessed)
@@ -211,16 +146,31 @@ public class MainActivity extends AppCompatActivity
             view.setVisibility(View.INVISIBLE);
     }
 
-    private void askQuestion()
+    @OnClick(R.id.buttonSave)
+    void onButtonSaveClick()
     {
-        currentAnimalsNode=animalsDB.getAnimalsNodeById(pointer);
-        textViewQuestion.setText(currentAnimalsNode.getQuestion());
-    }
+        String qe=editTextNewQuestion.getText().toString();
+        String name=editTextName.getText().toString();
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState)
-    {
-        super.onSaveInstanceState(outState);
-        outState.putInt("POINTER",pointer);
+        if(qe.equals("") || name.equals(""))
+        {
+            for (View view:viewListForAdding)
+                view.setVisibility(View.INVISIBLE);
+            textViewQuestion.setText("");
+            return;
+        }
+
+        for (View view:viewListForAdding)
+            view.setVisibility(View.INVISIBLE);
+
+        for (View view: viewListGussed)
+            view.setVisibility(View.INVISIBLE);
+
+        for (View view: viewListYesNo)
+            view.setVisibility(View.INVISIBLE);
+
+        textViewQuestion.setText("");
+
+        presenter.insertInCurrentPosition(qe,name);
     }
 }
